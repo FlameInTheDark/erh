@@ -22,18 +22,22 @@ func (a *Arg) String() string {
 	return a.data
 }
 
+//ArgBase add base currency argument
 func ArgBase(base string) Arg {
 	return Arg{data: fmt.Sprintf("base=%s", base)}
 }
 
+//ArgPlaces add currency places argument
 func ArgPlaces(places int) Arg {
 	return Arg{data: fmt.Sprintf("places=%d", places)}
 }
 
+//ArgAmount add currency amount argument
 func ArgAmount(amount float64) Arg {
 	return Arg{data: fmt.Sprintf("amount=%f", amount)}
 }
 
+//ArgSymbols add currency symbols argument
 func ArgSymbols(symbols []string) Arg {
 	return Arg{data: fmt.Sprintf("symbols=%s", strings.Join(symbols, ","))}
 }
@@ -46,6 +50,7 @@ func argsToString(args []Arg) string {
 	return strings.Join(argStrings, "&")
 }
 
+//ConvertCtx convert currency request with context
 func ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
@@ -80,10 +85,12 @@ func ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Ar
 	return response, nil
 }
 
+//Convert with context.Background
 func Convert(from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
 	return ConvertCtx(context.Background(), from, to, amount, args...)
 }
 
+//HistoricalCtx historical currency with context
 func HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (HistoricalResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
@@ -117,11 +124,13 @@ func HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (Historical
 	return response, nil
 }
 
+//Historical with context.Background
 func Historical(date time.Time, args ...Arg) (HistoricalResponse, error) {
 	return HistoricalCtx(context.Background(), date, args...)
 }
 
-func TimeSeriesCtx(ctx context.Context, start, end time.Time, amount float64, args ...Arg) (TimeSeriesResponse, error) {
+//TimeSeriesCtx time series request with context
+func TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
@@ -155,10 +164,12 @@ func TimeSeriesCtx(ctx context.Context, start, end time.Time, amount float64, ar
 	return response, nil
 }
 
-func TimeSeries(ctx context.Context, start, end time.Time, amount float64, args ...Arg) (TimeSeriesResponse, error) {
-	return TimeSeriesCtx(context.Background(), start, end, amount, args...)
+//TimeSeries with context.Background
+func TimeSeries(ctx context.Context, start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
+	return TimeSeriesCtx(context.Background(), start, end, args...)
 }
 
+//SymbolsCtx returns available symbols
 func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
@@ -190,6 +201,7 @@ func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 	return response, nil
 }
 
+//Symbols with context.Background
 func Symbols() (SymbolsResponse, error) {
 	return SymbolsCtx(context.Background())
 }
