@@ -205,3 +205,41 @@ func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 func Symbols() (SymbolsResponse, error) {
 	return SymbolsCtx(context.Background())
 }
+
+//LatestCtx request latest rates with context
+func LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, error) {
+	req, err := http.NewRequest(
+		http.MethodGet,
+		fmt.Sprintf(
+			"%s/latest?%s",
+			host,
+			argsToString(args),
+		),
+		nil,
+	)
+	if err != nil {
+		return LatestResponse{}, err
+	}
+	req.WithContext(ctx)
+
+	client := http.DefaultClient
+	resp, err := client.Do(req)
+	if err != nil {
+		return LatestResponse{}, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return LatestResponse{}, errors.New(resp.Status)
+	}
+
+	var response LatestResponse
+	err = json.NewDecoder(resp.Body).Decode(&response)
+	if err != nil {
+		return LatestResponse{}, err
+	}
+	return response, nil
+}
+
+//Latest returns latest rates with context.Background
+func Latest(args ...Arg) (LatestResponse, error) {
+	return LatestCtx(context.Background(), args...)
+}

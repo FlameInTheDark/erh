@@ -54,3 +54,11 @@ type HistoricalResponse struct {
 	Date       string             `json:"date"`
 	Rates      map[string]float64 `json:"rates"`
 }
+
+type LatestResponse struct {
+	Motd    Motd               `json:"motd"`
+	Success bool               `json:"success"`
+	Base    string             `json:"base"`
+	Date    string             `json:"date"`
+	Rates   map[string]float64 `json:"rates"`
+}
