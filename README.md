@@ -1,3 +1,4 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/FlameInTheDark/erh)](https://goreportcard.com/report/github.com/FlameInTheDark/erh) [![Go Reference](https://pkg.go.dev/badge/github.com/FlameInTheDark/erh.svg)](https://pkg.go.dev/github.com/FlameInTheDark/erh)
 # Exchange Rate API
 
 API client for https://exchangerates.host
@@ -7,6 +8,7 @@ API client for https://exchangerates.host
 `go get -u github.com/FlameInTheDark/erh`
 
 ```go
+package main
 import (
     "log"
     "github.com/FlameInTheDark/erh"
