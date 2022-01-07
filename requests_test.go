@@ -76,7 +76,7 @@ func TestArgBase(t *testing.T) {
 	}{
 		{"Usage", args{base: "USD"}, Arg{data: "base=USD"}},
 	}
-		for _, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ArgBase(tt.args.base); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ArgBase() = %v, want %v", got, tt.want)
@@ -94,7 +94,7 @@ func Test_argsToString(t *testing.T) {
 		args args
 		want string
 	}{
-		{"Usage", args{[]Arg{ArgAmount(10), ArgSymbols([]string{"USD", "EUR"}), ArgPlaces(2), ArgBase("JPY")}},"amount=10.000000&symbols=USD,EUR&places=2&base=JPY"},
+		{"Usage", args{[]Arg{ArgAmount(10), ArgSymbols([]string{"USD", "EUR"}), ArgPlaces(2), ArgBase("JPY")}}, "amount=10.000000&symbols=USD,EUR&places=2&base=JPY"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
