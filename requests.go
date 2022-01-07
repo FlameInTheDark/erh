@@ -14,6 +14,7 @@ const (
 	host = "https://api.exchangerate.host"
 )
 
+//Arg contain formatted argument
 type Arg struct {
 	data string
 }
@@ -165,7 +166,7 @@ func TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (Time
 }
 
 //TimeSeries with context.Background
-func TimeSeries(ctx context.Context, start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
+func TimeSeries(start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
 	return TimeSeriesCtx(context.Background(), start, end, args...)
 }
 
