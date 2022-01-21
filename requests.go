@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -16,39 +18,52 @@ const (
 
 //Arg contain formatted argument
 type Arg struct {
-	data string
+	key   string
+	value string
 }
 
+//Key returns key of the argument
+func (a *Arg) Key() string {
+	return a.key
+}
+
+//Value returns value of the argument
+func (a *Arg) Value() string {
+	return a.value
+}
+
+//String stringer interface
 func (a *Arg) String() string {
-	return a.data
+	return fmt.Sprintf("%s=%s", a.key, a.value)
 }
 
 //ArgBase add base currency argument
 func ArgBase(base string) Arg {
-	return Arg{data: fmt.Sprintf("base=%s", base)}
+	return Arg{key: "base", value: base}
 }
 
 //ArgPlaces add currency places argument
 func ArgPlaces(places int) Arg {
-	return Arg{data: fmt.Sprintf("places=%d", places)}
+	return Arg{key: "places", value: strconv.Itoa(places)}
 }
 
 //ArgAmount add currency amount argument
 func ArgAmount(amount float64) Arg {
-	return Arg{data: fmt.Sprintf("amount=%f", amount)}
+	return Arg{key: "amount", value: strconv.FormatFloat(amount, 'f', -1, 64)}
 }
 
 //ArgSymbols add currency symbols argument
 func ArgSymbols(symbols []string) Arg {
-	return Arg{data: fmt.Sprintf("symbols=%s", strings.Join(symbols, ","))}
+	return Arg{key: "symbols", value: strings.Join(symbols, ",")}
 }
 
-func argsToString(args []Arg) string {
-	var argStrings []string
-	for _, a := range args {
-		argStrings = append(argStrings, a.String())
+//argsURLEncoded convert slice of arguments to url encoded string
+func argsURLEncoded(args []Arg) string {
+	uv := url.Values{}
+	for _, arg := range args {
+		uv.Add(arg.Key(), arg.Value())
 	}
-	return strings.Join(argStrings, "&")
+	return uv.Encode()
 }
 
 //ConvertCtx convert currency request with context
@@ -56,22 +71,21 @@ func ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Ar
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
-			"%s/convert?from=%s&to=%s&amount=%f%s",
+			"%s/convert?from=%s&to=%s&amount=%f&%s",
 			host,
 			from,
 			to,
 			amount,
-			argsToString(args),
+			argsURLEncoded(args),
 		),
 		nil,
 	)
 	if err != nil {
 		return ConvertResponse{}, err
 	}
-	req.WithContext(ctx)
 
 	client := http.DefaultClient
-	resp, err := client.Do(req)
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return ConvertResponse{}, err
 	}
@@ -99,17 +113,16 @@ func HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (Historical
 			"%s/%s?%s",
 			host,
 			date.Format("2006-01-02"),
-			argsToString(args),
+			argsURLEncoded(args),
 		),
 		nil,
 	)
 	if err != nil {
 		return HistoricalResponse{}, err
 	}
-	req.WithContext(ctx)
 
 	client := http.DefaultClient
-	resp, err := client.Do(req)
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return HistoricalResponse{}, err
 	}
@@ -139,17 +152,16 @@ func TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (Time
 			host,
 			start.Format("2006-01-02"),
 			end.Format("2006-01-02"),
-			argsToString(args),
+			argsURLEncoded(args),
 		),
 		nil,
 	)
 	if err != nil {
 		return TimeSeriesResponse{}, err
 	}
-	req.WithContext(ctx)
 
 	client := http.DefaultClient
-	resp, err := client.Do(req)
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return TimeSeriesResponse{}, err
 	}
@@ -183,10 +195,9 @@ func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 	if err != nil {
 		return SymbolsResponse{}, err
 	}
-	req.WithContext(ctx)
 
 	client := http.DefaultClient
-	resp, err := client.Do(req)
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return SymbolsResponse{}, err
 	}
@@ -214,17 +225,16 @@ func LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, error) {
 		fmt.Sprintf(
 			"%s/latest?%s",
 			host,
-			argsToString(args),
+			argsURLEncoded(args),
 		),
 		nil,
 	)
 	if err != nil {
 		return LatestResponse{}, err
 	}
-	req.WithContext(ctx)
 
 	client := http.DefaultClient
-	resp, err := client.Do(req)
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return LatestResponse{}, err
 	}

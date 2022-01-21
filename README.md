@@ -1,4 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/FlameInTheDark/erh)](https://goreportcard.com/report/github.com/FlameInTheDark/erh) [![Go Reference](https://pkg.go.dev/badge/github.com/FlameInTheDark/erh.svg)](https://pkg.go.dev/github.com/FlameInTheDark/erh)
+
 # Exchange Rate API
 
 API client for https://exchangerate.host

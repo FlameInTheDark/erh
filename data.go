@@ -26,7 +26,7 @@ type ConvertQuery struct {
 	Amount float64 `json:"amount"`
 }
 
-//ConvertInfo contains converted data
+//ConvertInfo contains converted value
 type ConvertInfo struct {
 	Rate float64 `json:"rate"`
 }

@@ -14,7 +14,7 @@ func TestArgAmount(t *testing.T) {
 		args args
 		want Arg
 	}{
-		{"Usage", args{amount: 10}, Arg{data: "amount=10.000000"}},
+		{"Usage", args{amount: 10}, Arg{key: "amount", value: "10"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestArgSymbols(t *testing.T) {
 		args args
 		want Arg
 	}{
-		{"Usage", args{symbols: []string{"USD", "EUR"}}, Arg{data: "symbols=USD,EUR"}},
+		{"Usage", args{symbols: []string{"USD", "EUR"}}, Arg{key: "symbols", value: "USD,EUR"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestArgPlaces(t *testing.T) {
 		args args
 		want Arg
 	}{
-		{"Usage", args{places: 2}, Arg{data: "places=2"}},
+		{"Usage", args{places: 2}, Arg{key: "places", value: "2"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestArgBase(t *testing.T) {
 		args args
 		want Arg
 	}{
-		{"Usage", args{base: "USD"}, Arg{data: "base=USD"}},
+		{"Usage", args{base: "USD"}, Arg{key: "base", value: "USD"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -94,11 +94,11 @@ func Test_argsToString(t *testing.T) {
 		args args
 		want string
 	}{
-		{"Usage", args{[]Arg{ArgAmount(10), ArgSymbols([]string{"USD", "EUR"}), ArgPlaces(2), ArgBase("JPY")}}, "amount=10.000000&symbols=USD,EUR&places=2&base=JPY"},
+		{"Usage", args{[]Arg{ArgAmount(10), ArgSymbols([]string{"USD", "EUR"}), ArgPlaces(2), ArgBase("JPY")}}, "amount=10&base=JPY&places=2&symbols=USD%2CEUR"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := argsToString(tt.args.args); got != tt.want {
+			if got := argsURLEncoded(tt.args.args); got != tt.want {
 				t.Errorf("argsToString() = %v, want %v", got, tt.want)
 			}
 		})
