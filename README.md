@@ -22,3 +22,11 @@ func main() {
     }
 }
 ```
+
+## Methods
+
+### [Convert](https://pkg.go.dev/github.com/FlameInTheDark/erh#Convert)
+### [Historical](https://pkg.go.dev/github.com/FlameInTheDark/erh#Historical)
+### [Latest](https://pkg.go.dev/github.com/FlameInTheDark/erh#Latest)
+### [Symbols](https://pkg.go.dev/github.com/FlameInTheDark/erh#Symbols)
+### [Timeseries](https://pkg.go.dev/github.com/FlameInTheDark/erh#TimeSeries)
