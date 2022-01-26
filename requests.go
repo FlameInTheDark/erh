@@ -117,7 +117,9 @@ func (c *Client) ConvertCtx(ctx context.Context, from, to string, amount float64
 	return response, nil
 }
 
-//Convert with context.Background
+//Convert currency conversion endpoint, can be used to convert any amount from one currency to another.
+//In order to convert currencies, please use the API's convert endpoint,
+//append the "from" and "to" parameters and set them to your preferred base and target currency codes.
 func (c *Client) Convert(from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
 	return c.ConvertCtx(context.Background(), from, to, amount, args...)
 }
@@ -154,7 +156,7 @@ func (c *Client) HistoricalCtx(ctx context.Context, date time.Time, args ...Arg)
 	return response, nil
 }
 
-//Historical with context.Background
+//Historical rates are available for most currencies all the way back to the year of 1999.
 func (c *Client) Historical(date time.Time, args ...Arg) (HistoricalResponse, error) {
 	return c.HistoricalCtx(context.Background(), date, args...)
 }
@@ -192,7 +194,8 @@ func (c *Client) TimeSeriesCtx(ctx context.Context, start, end time.Time, args .
 	return response, nil
 }
 
-//TimeSeries with context.Background
+//TimeSeries endpoint are for daily historical rates between two dates of your choice,
+//with a maximum time frame of 366 days.
 func (c *Client) TimeSeries(start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
 	return c.TimeSeriesCtx(context.Background(), start, end, args...)
 }
@@ -263,7 +266,8 @@ func (c *Client) LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, er
 	return response, nil
 }
 
-//Latest returns latest rates with context.Background
+//Latest get the latest foreign exchange reference rates.
+//Latest endpoint will return exchange rate data updated on daily basis.
 func (c *Client) Latest(args ...Arg) (LatestResponse, error) {
 	return c.LatestCtx(context.Background(), args...)
 }
