@@ -16,7 +16,8 @@ import (
 )
 
 func main() {
-    conv, err := erh.Convert("USD", "EUR", 30.25, erh.ArgPlaces(2))
+	c := erh.NewClient()
+    conv, err := c.Convert("USD", "EUR", 30.25, erh.ArgPlaces(2))
     if err != nil {
         log.Fatal(err)
     }

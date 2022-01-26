@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	host = "https://api.exchangerate.host"
+	baseUrl = "https://api.exchangerate.host"
 )
 
 //Arg contain formatted argument
@@ -66,13 +66,31 @@ func argsURLEncoded(args []Arg) string {
 	return uv.Encode()
 }
 
+//Client is API client
+type Client struct {
+	client *http.Client
+}
+
+//NewClient create new API client with default http.Client
+func NewClient() *Client {
+	return &Client{client: http.DefaultClient}
+}
+
+//SetHttpClient set custom http client
+func (c *Client) SetHttpClient(client *http.Client) {
+	if client == nil {
+		return
+	}
+	c.client = client
+}
+
 //ConvertCtx convert currency request with context
-func ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
+func (c *Client) ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
 			"%s/convert?from=%s&to=%s&amount=%f&%s",
-			host,
+			baseUrl,
 			from,
 			to,
 			amount,
@@ -84,8 +102,7 @@ func ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Ar
 		return ConvertResponse{}, err
 	}
 
-	client := http.DefaultClient
-	resp, err := client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return ConvertResponse{}, err
 	}
@@ -101,17 +118,17 @@ func ConvertCtx(ctx context.Context, from, to string, amount float64, args ...Ar
 }
 
 //Convert with context.Background
-func Convert(from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
-	return ConvertCtx(context.Background(), from, to, amount, args...)
+func (c *Client) Convert(from, to string, amount float64, args ...Arg) (ConvertResponse, error) {
+	return c.ConvertCtx(context.Background(), from, to, amount, args...)
 }
 
 //HistoricalCtx historical currency with context
-func HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (HistoricalResponse, error) {
+func (c *Client) HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (HistoricalResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
 			"%s/%s?%s",
-			host,
+			baseUrl,
 			date.Format("2006-01-02"),
 			argsURLEncoded(args),
 		),
@@ -121,8 +138,7 @@ func HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (Historical
 		return HistoricalResponse{}, err
 	}
 
-	client := http.DefaultClient
-	resp, err := client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return HistoricalResponse{}, err
 	}
@@ -139,17 +155,17 @@ func HistoricalCtx(ctx context.Context, date time.Time, args ...Arg) (Historical
 }
 
 //Historical with context.Background
-func Historical(date time.Time, args ...Arg) (HistoricalResponse, error) {
-	return HistoricalCtx(context.Background(), date, args...)
+func (c *Client) Historical(date time.Time, args ...Arg) (HistoricalResponse, error) {
+	return c.HistoricalCtx(context.Background(), date, args...)
 }
 
 //TimeSeriesCtx time series request with context
-func TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
+func (c *Client) TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
 			"%s/timeseries?start_date=%s&end_date=%s&%s",
-			host,
+			baseUrl,
 			start.Format("2006-01-02"),
 			end.Format("2006-01-02"),
 			argsURLEncoded(args),
@@ -160,8 +176,7 @@ func TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (Time
 		return TimeSeriesResponse{}, err
 	}
 
-	client := http.DefaultClient
-	resp, err := client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return TimeSeriesResponse{}, err
 	}
@@ -178,17 +193,17 @@ func TimeSeriesCtx(ctx context.Context, start, end time.Time, args ...Arg) (Time
 }
 
 //TimeSeries with context.Background
-func TimeSeries(start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
-	return TimeSeriesCtx(context.Background(), start, end, args...)
+func (c *Client) TimeSeries(start, end time.Time, args ...Arg) (TimeSeriesResponse, error) {
+	return c.TimeSeriesCtx(context.Background(), start, end, args...)
 }
 
 //SymbolsCtx returns available symbols
-func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
+func (c *Client) SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
 			"%s/symbols",
-			host,
+			baseUrl,
 		),
 		nil,
 	)
@@ -196,8 +211,7 @@ func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 		return SymbolsResponse{}, err
 	}
 
-	client := http.DefaultClient
-	resp, err := client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return SymbolsResponse{}, err
 	}
@@ -214,17 +228,17 @@ func SymbolsCtx(ctx context.Context) (SymbolsResponse, error) {
 }
 
 //Symbols with context.Background
-func Symbols() (SymbolsResponse, error) {
-	return SymbolsCtx(context.Background())
+func (c *Client) Symbols() (SymbolsResponse, error) {
+	return c.SymbolsCtx(context.Background())
 }
 
 //LatestCtx request latest rates with context
-func LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, error) {
+func (c *Client) LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf(
 			"%s/latest?%s",
-			host,
+			baseUrl,
 			argsURLEncoded(args),
 		),
 		nil,
@@ -233,8 +247,7 @@ func LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, error) {
 		return LatestResponse{}, err
 	}
 
-	client := http.DefaultClient
-	resp, err := client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return LatestResponse{}, err
 	}
@@ -251,6 +264,6 @@ func LatestCtx(ctx context.Context, args ...Arg) (LatestResponse, error) {
 }
 
 //Latest returns latest rates with context.Background
-func Latest(args ...Arg) (LatestResponse, error) {
-	return LatestCtx(context.Background(), args...)
+func (c *Client) Latest(args ...Arg) (LatestResponse, error) {
+	return c.LatestCtx(context.Background(), args...)
 }
