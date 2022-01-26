@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	c := erh.NewClient()
+    c := erh.NewClient()
     conv, err := c.Convert("USD", "EUR", 30.25, erh.ArgPlaces(2))
     if err != nil {
         log.Fatal(err)
@@ -26,8 +26,8 @@ func main() {
 
 ## Methods
 
-### [Convert](https://pkg.go.dev/github.com/FlameInTheDark/erh#Convert)
-### [Historical](https://pkg.go.dev/github.com/FlameInTheDark/erh#Historical)
-### [Latest](https://pkg.go.dev/github.com/FlameInTheDark/erh#Latest)
-### [Symbols](https://pkg.go.dev/github.com/FlameInTheDark/erh#Symbols)
-### [Timeseries](https://pkg.go.dev/github.com/FlameInTheDark/erh#TimeSeries)
+### [Convert](https://pkg.go.dev/github.com/FlameInTheDark/erh#Client.Convert)
+### [Historical](https://pkg.go.dev/github.com/FlameInTheDark/erh#Client.Historical)
+### [Latest](https://pkg.go.dev/github.com/FlameInTheDark/erh#Client.Latest)
+### [Symbols](https://pkg.go.dev/github.com/FlameInTheDark/erh#Client.Symbols)
+### [Timeseries](https://pkg.go.dev/github.com/FlameInTheDark/erh#Client.TimeSeries)
